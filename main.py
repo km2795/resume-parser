@@ -15,7 +15,7 @@ def docx_conversion(file):
   return None
 
 # Take the input from the command line.
-file = input("Enter the file name: ")
+file = input("Enter the file name (only .PDF and .DOCX extension supported): ")
 if len(file) < 1:
   output("No file name entered.")
 else:
