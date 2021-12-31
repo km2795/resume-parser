@@ -146,7 +146,7 @@ def parse_resume(text):
   resume_fields["email"] = email.group(0) if email != None else ""
 
   # Regex for phone number.
-  phone = re.search(r"^([(\+]?\d{1,3}[)]?[- ]?[.]?)?\d{10}$", text)
+  phone = re.search(r"([(\+]?\d{1,3}[)]?[- ]?[.]?)?\d{10}", text)
   resume_fields["phone"] = phone.group(0) if phone != None else ""
 
   return resume_fields
