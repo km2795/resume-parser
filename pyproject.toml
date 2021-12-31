@@ -6,13 +6,10 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.7,<3.11"
-numpy = "^1.21.5"
 nltk = "^3.6.7"
-sklearn = "^0.0"
 pdfminer = "^20191125"
 "pdfminer.six" = "^20211012"
 docx2txt = "^0.8"
-spacy = "^3.2.1"
 
 [tool.poetry.dev-dependencies]
 
