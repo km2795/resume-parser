@@ -21,12 +21,14 @@ def parse_resume(text):
       for item in row:
         NAME_DATABASE.append(item.lower())
 
+  # Dictionary to return.
   resume_fields = {
     "name": "",
     "email": "",
     "phone": ""
   }
 
+  # For name selection.
   name_grammar = r"NAME: {<NN|NNP>+}"
   chunk_parser = nltk.RegexpParser(name_grammar)
 
@@ -45,11 +47,10 @@ def parse_resume(text):
   # Cache the whole raw text as string too.
   doc = ""
   for sent in sentences:
-    # These lines are not useful, until an NLP type solution is found.
-    # lines.append(sent)
-    # _tokens = nltk.word_tokenize(sent)
-    # tokens.extend(_tokens)
-    # pos_tags.append(nltk.pos_tag(_tokens))
+    lines.append(sent)
+    _tokens = nltk.word_tokenize(sent)
+    tokens.extend(_tokens)
+    pos_tags.append(nltk.pos_tag(_tokens))
     doc += sent
 
   found_names = []
