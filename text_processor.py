@@ -21,11 +21,17 @@ def parse_resume(text):
       for item in row:
         NAME_DATABASE.append(item.lower())
 
-  # Dictionary to return.
+  # Fields that needs to be matched, regardless of resume type.
   resume_fields = {
     "name": "",
     "email": "",
-    "phone": ""
+    "phone": "",
+    "education": [],
+    "projects": [],
+    "work experience": [],
+    "achievements": [],
+    "certifications": [],
+    "hobbies": []
   }
 
   # For name selection.
@@ -76,47 +82,35 @@ def parse_resume(text):
   # Along with headlines, it will store from where the heading starts.
   indices = {}
 
-  # Criterion for "personal information" or "about me" section.
-  found_personal_info = re.search(r"personal info[r]?[m]?[a]?[t]?[i]?[o]?[n]?|about me|personal detail[s]?", doc)
-  if found_personal_info != None:
-    key_name = doc[found_personal_info.start():found_personal_info.end()]
-    indices[key_name] = found_personal_info.end()
-
   # Criterion for "work experience" section.
   found_experience = re.search(r"experience![d]|work experience|work history|work engagement|professional engagement", doc)
   if found_experience != None:
-    key_name = doc[found_experience.start():found_experience.end()]
-    indices[key_name] = found_experience.end()
+    indices["experience"] = found_experience.end()
 
   # Criterion for "skills" section.
   found_skills = re.search(r"skill|skill.*[:]?|technologies:", doc)
   if found_skills != None:
-    key_name = doc[found_skills.start():found_skills.end()]
-    indices[key_name] = found_skills.end()
+    indices["skills"] = found_skills.end()
 
   # Criterion for "education" section.
   found_education = re.search(r"education[:]?|graduation[:]?|qualification[:]?", doc)
   if found_education != None:
-    key_name = doc[found_education.start():found_education.end()]
-    indices[key_name] = found_education.end()
+    indices["education"] = found_education.end()
 
   # Criterion for "achievements" section.
   found_achievements = re.search(r"achievements|accomplishments", doc)
   if found_achievements != None:
-    key_name = doc[found_achievements.start():found_achievements.end()]
-    indices[key_name] = found_achievements.end()
+    indices["achievements"] = found_achievements.end()
 
   # Criterion for "certifications" section.
   found_certifications = re.search(r"certifications", doc)
   if found_certifications != None:
-    key_name = doc[found_certifications.start():found_certifications.end()]
-    indices[key_name] = found_certifications.end()
+    indices["certifications"] = found_certifications.end()
 
   # Criterion for "projects" sections.
-  found_projects = re.search(r"project", doc)
+  found_projects = re.search(r"project[s]?", doc)
   if found_projects != None:
-    key_name = doc[found_projects.start():found_projects.end()]
-    indices[key_name] = found_projects.end()
+    indices["projects"] = found_projects.end()
 
 
   # Each headline will sorted according to their index in the document.
