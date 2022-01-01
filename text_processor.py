@@ -3,6 +3,7 @@ import csv
 import nltk
 import json
 
+
 # Extract the skills from the text.
 def extract_skills(text):
 
@@ -40,6 +41,7 @@ def extract_skills(text):
 
   return list(found_skills)
 
+
 # Extract name.
 def extract_name(text):
 
@@ -73,6 +75,7 @@ def extract_name(text):
   # This is just a temporary fix.
   return found_names[0]
 
+
 # Extract the education.
 # It will extract only the name of the institute,
 # other information will be skipped.
@@ -99,6 +102,34 @@ def extract_education(text):
         found_education.add(sent)
 
   return list(found_education)
+
+
+"""
+ Extract work experiences.
+ Extracts only the names of the places worked.
+ It can't extract, college type work places,
+ since they would overlap with education database
+ (hence are skipped).
+"""
+def extract_work_experience(text):
+
+  # Should contain education type work places.
+  # Need a fix for that.
+  WORK_EX_DB = [
+    "inc", "society", "societies", "forces", "force",
+    "conglomerate", "conglomerates", "enterprice",
+    "enterprices" "industry", "industries", "service",
+    "services", "private limited", "pvt ltd", "pte ltd"
+  ]
+
+  found_work_ex = set()
+
+  for sent in text.split("\n"):
+    for item in WORK_EX_DB:
+      if item in sent.lower():
+        found_work_ex.add(re.sub("[ ]{2,}", "", sent))
+
+  return list(found_work_ex)
 
 # Main process to start the extraction.
 def parse_resume(text):
@@ -150,11 +181,6 @@ def parse_resume(text):
   # Stores the headlines (if found) of the resume, based on certain pre-defined criterion.
   # Along with headlines, it will store from where the heading starts.
   indices = {}
-
-  # Criterion for "work experience" section.
-  found_experience = re.search(r"experience![d]|work experience|work history|work engagement|professional engagement", doc)
-  if found_experience != None:
-    indices["experience"] = found_experience.end()
 
   # Criterion for "achievements" section.
   found_achievements = re.search(r"achievements|accomplishments", doc)
@@ -208,5 +234,8 @@ def parse_resume(text):
 
   # Extract the education.
   resume_fields["education"] = extract_education(text)
+
+  # Extract the work experience.
+  resume_fields["experience"] = extract_work_experience(text)
 
   return resume_fields
