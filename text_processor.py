@@ -51,14 +51,14 @@ def parse_resume(text):
   nltk.download("names")
 
   # Database of names.
-  NAME_DATABASE = []
+  NAMES_DB = []
 
   # Load the names in a cache.
   with open("./dataset/names.csv", "r") as file:
     reader = csv.reader(file, delimiter=",")
     for row in reader:
       for item in row:
-        NAME_DATABASE.append(item.lower())
+        NAMES_DB.append(item.lower())
 
   # Fields that needs to be matched, regardless of resume type.
   resume_fields = {
@@ -106,7 +106,7 @@ def parse_resume(text):
   for subtree in name_tokens.subtrees():
     if subtree.label() == "NAME":
       for index, leaf in enumerate(subtree.leaves()):
-        if (leaf[0].lower() in NAME_DATABASE and ("NN" in leaf[1] or "NNP" in leaf[1])):
+        if (leaf[0].lower() in NAMES_DB and ("NN" in leaf[1] or "NNP" in leaf[1])):
           found_names.append(leaf[0])
 
   # Since the method is not accurate, it will pick other English type
