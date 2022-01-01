@@ -82,6 +82,7 @@ def parse_resume(text):
   nltk.download("maxent_ne_chunker")
   nltk.download("averaged_perceptron_tagger")
   nltk.download("names")
+  nltk.download("stopwords")
 
   # Fields that needs to be matched, regardless of resume type.
   resume_fields = {
