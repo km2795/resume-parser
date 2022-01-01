@@ -3,6 +3,45 @@ import csv
 import nltk
 import json
 
+# Extract the skills from the text.
+def extract_skills(text):
+
+  # Database of skills.
+  SKILLS_DB = []
+
+  # Load the skills in a cache.
+  with open("skills_db.csv", "r") as file:
+    reader = csv.reader(file, delimiter="\n")
+    for row in reader:
+      for item in row:
+        SKILLS_DB.append(item.lower())
+
+  # Load the stopwords.
+  stopwords = set(nltk.corpus.stopwords.words("english"))
+
+  # Process tokens from the text.
+  tokens = nltk.word_tokenize(text)
+
+  # Remove the stopwords and non-alphanumeric characters from the token list.
+  tokens = [token for token in tokens if token not in stopwords]
+  tokens = [token for token in tokens if token.isalpha()]
+
+  bi_tri_grams  = list(map(" ".join, nltk.everygrams(tokens, 2, 3)))
+
+  found_skills = set()
+
+  for token in tokens:
+    if token.lower() in SKILLS_DB:
+      found_skills.add(token)
+
+  for ngram in bi_tri_grams:
+      if ngram.lower() in SKILLS_DB:
+          found_skills.add(ngram)
+
+  return list(found_skills)
+
+
+# Main process to start the extraction.
 def parse_resume(text):
 
   nltk.download("punkt")
@@ -87,11 +126,6 @@ def parse_resume(text):
   if found_experience != None:
     indices["experience"] = found_experience.end()
 
-  # Criterion for "skills" section.
-  found_skills = re.search(r"skill|skill.*[:]?|technologies:", doc)
-  if found_skills != None:
-    indices["skills"] = found_skills.end()
-
   # Criterion for "education" section.
   found_education = re.search(r"education[:]?|graduation[:]?|qualification[:]?", doc)
   if found_education != None:
@@ -142,5 +176,8 @@ def parse_resume(text):
   # Regex for phone number.
   phone = re.search(r"([(\+]?\d{1,3}[)]?[- ]?[.]?)?\d{10}", text)
   resume_fields["phone"] = phone.group(0) if phone != None else ""
+
+  # Extract the skills.
+  resume_fields["skills"] = extract_skills(doc)
 
   return resume_fields
