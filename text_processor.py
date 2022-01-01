@@ -40,15 +40,8 @@ def extract_skills(text):
 
   return list(found_skills)
 
-
-# Main process to start the extraction.
-def parse_resume(text):
-
-  nltk.download("punkt")
-  nltk.download("words")
-  nltk.download("maxent_ne_chunker")
-  nltk.download("averaged_perceptron_tagger")
-  nltk.download("names")
+# Extract name.
+def extract_name(text):
 
   # Database of names.
   NAMES_DB = []
@@ -59,6 +52,36 @@ def parse_resume(text):
     for row in reader:
       for item in row:
         NAMES_DB.append(item.lower())
+
+  # For name selection.
+  name_grammar = r"NAME: {<NN|NNP> <NN|NNP>*}"
+  chunk_parser = nltk.RegexpParser(name_grammar)
+
+  found_names = []
+
+  # Don't lowercase letter for 'name' field,
+  # it helps in rooting out proper nouns (names are generally written as proper nouns).
+  name_tokens = chunk_parser.parse(nltk.pos_tag(nltk.word_tokenize(text)))
+  for subtree in name_tokens.subtrees():
+    if subtree.label() == "NAME":
+      for index, leaf in enumerate(subtree.leaves()):
+        if (leaf[0].lower() in NAMES_DB and ("NN" in leaf[1] or "NNP" in leaf[1])):
+          found_names.append(leaf[0])
+
+  # It's not very accurate, hence returning only the first
+  # entry, since most resume formats have the name at the top.
+  # This is just a temporary fix.
+  return found_names[0]
+
+
+# Main process to start the extraction.
+def parse_resume(text):
+
+  nltk.download("punkt")
+  nltk.download("words")
+  nltk.download("maxent_ne_chunker")
+  nltk.download("averaged_perceptron_tagger")
+  nltk.download("names")
 
   # Fields that needs to be matched, regardless of resume type.
   resume_fields = {
@@ -72,10 +95,6 @@ def parse_resume(text):
     "certifications": [],
     "hobbies": []
   }
-
-  # For name selection.
-  name_grammar = r"NAME: {<NN|NNP>+}"
-  chunk_parser = nltk.RegexpParser(name_grammar)
 
   # Cache the individual sentences.
   lines = []
@@ -97,22 +116,6 @@ def parse_resume(text):
     tokens.extend(_tokens)
     pos_tags.append(nltk.pos_tag(_tokens))
     doc += sent
-
-  found_names = []
-
-  # Don't lowercase letter for 'name' field,
-  # it helps in rooting out proper nouns (names are generally written as proper nouns).
-  name_tokens = chunk_parser.parse(nltk.pos_tag(nltk.word_tokenize(doc)))
-  for subtree in name_tokens.subtrees():
-    if subtree.label() == "NAME":
-      for index, leaf in enumerate(subtree.leaves()):
-        if (leaf[0].lower() in NAMES_DB and ("NN" in leaf[1] or "NNP" in leaf[1])):
-          found_names.append(leaf[0])
-
-  # Since the method is not accurate, it will pick other English type
-  # names too, hence only keeping the first entry.
-  # Since in most cases, name is present at the top.
-  found_names = found_names[0]
 
   # For mostly regex type text extraction.
   doc = doc.lower()
@@ -167,7 +170,8 @@ def parse_resume(text):
       resume_fields[item[0]] = doc[item[1]:]
     i += 1
 
-  resume_fields["name"] = found_names
+  # Extract the name.
+  resume_fields["name"] = extract_name(text)
 
   # Regex for E-mail.
   email = re.search(r"[\w\d\.\-\#\_\$]+@[\w\d.]+", text)
@@ -178,6 +182,7 @@ def parse_resume(text):
   resume_fields["phone"] = phone.group(0) if phone != None else ""
 
   # Extract the skills.
-  resume_fields["skills"] = extract_skills(doc)
+  resume_fields["skills"] = extract_skills(text)
+
 
   return resume_fields
