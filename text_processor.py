@@ -73,6 +73,32 @@ def extract_name(text):
   # This is just a temporary fix.
   return found_names[0]
 
+# Extract the education.
+# It will extract only the name of the institute,
+# other information will be skipped.
+def extract_education(text):
+
+  # Database of education related terms.
+  EDUCATION_DB = [
+    "university",
+    "school",
+    "college",
+    "institute",
+    "polytechnic",
+    "campus"
+  ]
+
+  found_education = set()
+
+  # Split the text into sentences, and then
+  # search for education related terms in each
+  # sentence. If found, add that sentence.
+  for sent in text.split("\n"):
+    for item in EDUCATION_DB:
+      if item in sent.lower():
+        found_education.add(sent)
+
+  return list(found_education)
 
 # Main process to start the extraction.
 def parse_resume(text):
@@ -130,11 +156,6 @@ def parse_resume(text):
   if found_experience != None:
     indices["experience"] = found_experience.end()
 
-  # Criterion for "education" section.
-  found_education = re.search(r"education[:]?|graduation[:]?|qualification[:]?", doc)
-  if found_education != None:
-    indices["education"] = found_education.end()
-
   # Criterion for "achievements" section.
   found_achievements = re.search(r"achievements|accomplishments", doc)
   if found_achievements != None:
@@ -185,5 +206,7 @@ def parse_resume(text):
   # Extract the skills.
   resume_fields["skills"] = extract_skills(text)
 
+  # Extract the education.
+  resume_fields["education"] = extract_education(text)
 
   return resume_fields
