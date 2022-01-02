@@ -149,7 +149,7 @@ def parse_resume(text):
     "phone": "",
     "education": [],
     "projects": [],
-    "work experience": [],
+    "work_experience": [],
     "achievements": [],
     "certifications": [],
     "hobbies": []
@@ -237,6 +237,6 @@ def parse_resume(text):
   resume_fields["education"] = extract_education(text)
 
   # Extract the work experience.
-  resume_fields["experience"] = extract_work_experience(text)
+  resume_fields["work_experience"] = extract_work_experience(text)
 
   return resume_fields
