@@ -45,7 +45,7 @@ def extract_name(text, pos_tags):
     for item in row:
       NAMES_DB.append(item.lower())
 
-  # For name selection.
+  # Grammar for name selection.
   name_grammar = r"NAME: {<NN|NNP> <NN|NNP>*}"
   chunk_parser = nltk.RegexpParser(name_grammar)
 
