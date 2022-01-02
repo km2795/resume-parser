@@ -128,7 +128,7 @@ def extract_work_experience(text):
   for sent in text.split("\n"):
     for item in WORK_EX_DB:
       if item in sent.lower():
-        found_work_ex.add(re.sub("[ ]{2,}", "", sent))
+        found_work_ex.add(sent.strip())
 
   return list(found_work_ex)
 
