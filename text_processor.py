@@ -11,11 +11,9 @@ def extract_skills(text, stopwords, tokens):
   SKILLS_DB = []
 
   # Load the skills in a cache.
-  with open("skills_db.csv", "r") as file:
-    reader = csv.reader(file, delimiter="\n")
-    for row in reader:
-      for item in row:
-        SKILLS_DB.append(item.lower())
+  for row in csv.reader(open("skills_db.csv", "r"), delimiter="\n"):
+    for item in row:
+      SKILLS_DB.append(item.lower())
 
   # Remove the stopwords and non-alphanumeric characters from the token list.
   tokens = [token for token in tokens if token not in stopwords]
@@ -43,11 +41,9 @@ def extract_name(text, pos_tags):
   NAMES_DB = []
 
   # Load the names in a cache.
-  with open("./dataset/names.csv", "r") as file:
-    reader = csv.reader(file, delimiter=",")
-    for row in reader:
-      for item in row:
-        NAMES_DB.append(item.lower())
+  for row in csv.reader(open("./dataset/names.csv", "r"), delimiter=","):
+    for item in row:
+      NAMES_DB.append(item.lower())
 
   # For name selection.
   name_grammar = r"NAME: {<NN|NNP> <NN|NNP>*}"
