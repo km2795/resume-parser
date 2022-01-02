@@ -119,7 +119,8 @@ def extract_work_experience(text):
     "inc", "society", "societies", "forces", "force",
     "conglomerate", "conglomerates", "enterprice",
     "enterprices" "industry", "industries", "service",
-    "services", "private limited", "pvt ltd", "pte ltd"
+    "services", "private limited", "pvt ltd", "pte ltd",
+    "technologies"
   ]
 
   found_work_ex = set()
