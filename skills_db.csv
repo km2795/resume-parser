@@ -1,3 +1,10 @@
+c
+cpp
+c++
+c/c++
+c++/c
+cpp/c
+c/cpp
 html
 html5
 node.js
@@ -6,7 +13,7 @@ java
 list
 assembly
 fortran
-R
+r
 scala
 kotlin
 android
@@ -44,6 +51,7 @@ svn
 devops
 dev-ops
 backend
+kubernetes
 back-end
 front-end
 frontend
@@ -61,14 +69,24 @@ full-stack
 ml
 ai/ml
 artificial intelligence
+microservices
+soa
+aws
+amazon web services
+azure
+microsoft azure
+gcp
+google cloud
+msoffice
+ms-office
+office
+microsoft office
+maven
+make
+cmake
+open-source
+opensource
 bash
-c
-cpp
-c++
-c/c++
-c++/c
-cpp/c
-c/cpp
 accountancy
 commerce
 finance
@@ -115,3 +133,4 @@ cantonese
 economics
 journaling
 journal
+marketing
