@@ -165,46 +165,22 @@ def parse_resume(text):
     "hobbies": []
   }
 
-  # Cache the individual sentences.
-  lines = []
-
-  # Cache the POS tags.
-  pos_tags = []
-
-  # Cache the tokens.
-  tokens = []
-
-  # Enumerate each sentence to fetch tokens and POS tags.
-  sentences = nltk.sent_tokenize(text)
-
-  # Cache the whole raw text as string too.
-  doc = ""
-  for sent in sentences:
-    lines.append(sent)
-    _tokens = nltk.word_tokenize(sent)
-    tokens.extend(_tokens)
-    pos_tags.append(nltk.pos_tag(_tokens))
-    doc += sent
-
-  # For mostly regex type text extraction.
-  doc = doc.lower()
-
   # Stores the headlines (if found) of the resume, based on certain pre-defined criterion.
   # Along with headlines, it will store from where the heading starts.
   indices = {}
 
   # Criterion for "achievements" section.
-  found_achievements = re.search(r"achievements|accomplishments", doc)
+  found_achievements = re.search(r"achievements|accomplishments", text)
   if found_achievements != None:
     indices["achievements"] = found_achievements.end()
 
   # Criterion for "certifications" section.
-  found_certifications = re.search(r"certifications", doc)
+  found_certifications = re.search(r"certifications", text)
   if found_certifications != None:
     indices["certifications"] = found_certifications.end()
 
   # Criterion for "projects" sections.
-  found_projects = re.search(r"project[s]?", doc)
+  found_projects = re.search(r"project[s]?", text)
   if found_projects != None:
     indices["projects"] = found_projects.end()
 
@@ -222,11 +198,11 @@ def parse_resume(text):
   for item in indices:
     if (i < j):
       # Ending index will contain the previous index's key name, so remove that.
-      resume_fields[item[0]] = doc[item[1]:(indices[i + 1][1] - len(indices[i + 1][0]))]
+      resume_fields[item[0]] = text[item[1]:(indices[i + 1][1] - len(indices[i + 1][0]))]
     else:
       # Problem with the last entry. It will include all
       # other fields coming after it, if they have not been explicitly identified.
-      resume_fields[item[0]] = doc[item[1]:]
+      resume_fields[item[0]] = text[item[1]:]
     i += 1
 
   # Extract the name.
