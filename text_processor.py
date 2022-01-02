@@ -5,7 +5,7 @@ import json
 
 
 # Extract the skills from the text.
-def extract_skills(text):
+def extract_skills(text, stopwords, tokens):
 
   # Database of skills.
   SKILLS_DB = []
@@ -16,12 +16,6 @@ def extract_skills(text):
     for row in reader:
       for item in row:
         SKILLS_DB.append(item.lower())
-
-  # Load the stopwords.
-  stopwords = set(nltk.corpus.stopwords.words("english"))
-
-  # Process tokens from the text.
-  tokens = nltk.word_tokenize(text)
 
   # Remove the stopwords and non-alphanumeric characters from the token list.
   tokens = [token for token in tokens if token not in stopwords]
@@ -43,7 +37,7 @@ def extract_skills(text):
 
 
 # Extract name.
-def extract_name(text):
+def extract_name(text, pos_tags):
 
   # Database of names.
   NAMES_DB = []
@@ -63,7 +57,7 @@ def extract_name(text):
 
   # Don't lowercase letter for 'name' field,
   # it helps in rooting out proper nouns (names are generally written as proper nouns).
-  name_tokens = chunk_parser.parse(nltk.pos_tag(nltk.word_tokenize(text)))
+  name_tokens = chunk_parser.parse(pos_tags)
   for subtree in name_tokens.subtrees():
     if subtree.label() == "NAME":
       for index, leaf in enumerate(subtree.leaves()):
@@ -111,9 +105,7 @@ def extract_education(text):
  since they would overlap with education database
  (hence are skipped).
 """
-def extract_work_experience(text):
-
-  stopwords = nltk.corpus.stopwords.words("english")
+def extract_work_experience(text, stopwords):
 
   # Should contain education type work places.
   # Need a fix for that.
@@ -151,6 +143,15 @@ def parse_resume(text):
   nltk.download("averaged_perceptron_tagger")
   nltk.download("names")
   nltk.download("stopwords")
+
+  # Load the stopwords.
+  stopwords = nltk.corpus.stopwords.words("english")
+
+  # Fetch the word sized tokens from the resume text.
+  tokens = nltk.word_tokenize(text)
+
+  # Fetch the POS tags from the word tokens.
+  pos_tags = nltk.pos_tag(tokens)
 
   # Fields that needs to be matched, regardless of resume type.
   resume_fields = {
@@ -206,7 +207,7 @@ def parse_resume(text):
     i += 1
 
   # Extract the name.
-  resume_fields["name"] = extract_name(text)
+  resume_fields["name"] = extract_name(text, list(pos_tags))
 
   # Regex for E-mail.
   email = re.search(r"[\w\d\.\-\#\_\$]+@[\w\d.]+", text)
@@ -217,12 +218,12 @@ def parse_resume(text):
   resume_fields["phone"] = phone.group(0) if phone != None else ""
 
   # Extract the skills.
-  resume_fields["skills"] = extract_skills(text)
+  resume_fields["skills"] = extract_skills(text, list(stopwords), list(tokens))
 
   # Extract the education.
   resume_fields["education"] = extract_education(text)
 
   # Extract the work experience.
-  resume_fields["work_experience"] = extract_work_experience(text)
+  resume_fields["work_experience"] = extract_work_experience(text, list(stopwords))
 
   return resume_fields
