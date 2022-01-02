@@ -1,7 +1,20 @@
 import os
+import nltk
 import docx2txt
 from pdfminer.high_level import extract_text
 import text_processor
+
+print("\nDownloading NLTK libraries...\n\n")
+
+# Download NLTK libraries.
+nltk.download("punkt")
+nltk.download("words")
+nltk.download("maxent_ne_chunker")
+nltk.download("averaged_perceptron_tagger")
+nltk.download("names")
+nltk.download("stopwords")
+
+print("\n\nDownload complete.\n\n\n")
 
 # For converting PDF files.
 def pdf_conversion(file):

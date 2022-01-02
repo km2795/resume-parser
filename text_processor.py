@@ -133,13 +133,6 @@ def extract_work_experience(text, stopwords):
 # Main process to start the extraction.
 def parse_resume(text):
 
-  nltk.download("punkt")
-  nltk.download("words")
-  nltk.download("maxent_ne_chunker")
-  nltk.download("averaged_perceptron_tagger")
-  nltk.download("names")
-  nltk.download("stopwords")
-
   # Load the stopwords.
   stopwords = nltk.corpus.stopwords.words("english")
 
