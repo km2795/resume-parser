@@ -113,6 +113,8 @@ def extract_education(text):
 """
 def extract_work_experience(text):
 
+  stopwords = nltk.corpus.stopwords.words("english")
+
   # Should contain education type work places.
   # Need a fix for that.
   WORK_EX_DB = [
@@ -125,10 +127,18 @@ def extract_work_experience(text):
 
   found_work_ex = set()
 
+  # Split the text into sentences in order to find the whole
+  # name of the work place. Not doing so, would only add the
+  # words present in the database that matched the name in the
+  # work place's string.
   for sent in text.split("\n"):
     for item in WORK_EX_DB:
       if item in sent.lower():
-        found_work_ex.add(sent.strip())
+
+        # If certain lines contain stopwords, that means it's
+        # not the name of the company, hence don't include them.
+        if len([word for word in sent.lower().split(" ") if word in stopwords]) < 1:
+          found_work_ex.add(sent.strip())
 
   return list(found_work_ex)
 
